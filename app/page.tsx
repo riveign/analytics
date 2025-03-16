@@ -221,7 +221,7 @@ export default function AnalyticsDashboard() {
   return (
     <div className="max-w-7xl mx-auto p-4 md:p-6">
       <DashboardHeader isPro={isPro} setIsPro={setIsPro} />
-      {!isPro && <UpgradeBanner />}
+      {!isPro && <UpgradeBanner setIsPro={setIsPro} />}
 
       <Tabs defaultValue="session" className="mb-6">
         <TabsList className="mb-4">
@@ -388,10 +388,10 @@ export default function AnalyticsDashboard() {
                   attention and when they&apos;re most active.
                 </p>
                 <button
-                  onClick={() => setIsPro(true)}
+                  onClick={() => setIsPro(!isPro)}
                   className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors"
                 >
-                  Upgrade to Pro
+                  {isPro ? "Switch to Free" : "Upgrade to Pro"}
                 </button>
               </div>
             ) : (
