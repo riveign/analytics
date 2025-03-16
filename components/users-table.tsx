@@ -197,66 +197,6 @@ export function UsersTable({
             Total Users: {filteredUsers.length}
           </h3>
           <div className="h-4 w-px bg-gray-200 mx-2" />
-          <div className="flex gap-2">
-            <button
-              onClick={() => setDateFilter("all")}
-              className={`px-3 py-1 rounded-md text-sm ${
-                dateFilter === "all"
-                  ? "bg-blue-100 text-blue-800"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-              }`}
-            >
-              All Time
-            </button>
-            <button
-              onClick={() => setDateFilter("30")}
-              className={`px-3 py-1 rounded-md text-sm ${
-                dateFilter === "30"
-                  ? "bg-blue-100 text-blue-800"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-              }`}
-            >
-              30 Days
-            </button>
-            <button
-              onClick={() => setDateFilter("60")}
-              className={`px-3 py-1 rounded-md text-sm ${
-                dateFilter === "60"
-                  ? "bg-blue-100 text-blue-800"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-              }`}
-            >
-              60 Days
-            </button>
-            <button
-              onClick={() => setDateFilter("90")}
-              className={`px-3 py-1 rounded-md text-sm ${
-                dateFilter === "90"
-                  ? "bg-blue-100 text-blue-800"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-              }`}
-            >
-              90 Days
-            </button>
-          </div>
-          <div className="relative inline-block group">
-            <button
-              onClick={() => isPro && setShowCustomDateFilter(true)}
-              className={`px-3 py-1 rounded-md text-sm ${
-                isPro
-                  ? "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                  : "bg-gray-100 text-gray-400 cursor-not-allowed"
-              }`}
-              disabled={!isPro}
-            >
-              Custom Range
-            </button>
-            {!isPro && (
-              <div className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-black text-white text-sm px-3 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity">
-                Upgrade to Pro to use custom date ranges
-              </div>
-            )}
-          </div>
         </div>
         <PaywallButton isPro={isPro} onClick={handleExport}>
           Export Users

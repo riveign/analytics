@@ -30,11 +30,14 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { analyticsData } from "@/lib/data";
+import { Ribbon } from "@/components/ui/ribbon";
 
 interface ChartCardProps {
   title: string;
   children: React.ReactNode;
   height?: number;
+  isPro?: boolean;
+  version?: string;
 }
 
 interface MetricsCardsProps {
@@ -68,13 +71,12 @@ type UserSegmentType =
   | "Casual Users"
   | "New Users";
 
-type UserSegmentDetails = {
+interface UserSegment {
   avgSessionLength: number;
   avgActionsPerSession: number;
-  multiChain: boolean;
   commonActions: string[];
   retentionRate: number;
-};
+}
 
 function PaywallOverlay({ title }: PaywallOverlayProps) {
   return (
@@ -114,9 +116,16 @@ function filterDataByDate(
   return data.filter((item) => new Date(item.date) >= filterDate);
 }
 
-function ChartCard({ title, children, height = 250 }: ChartCardProps) {
+function ChartCard({
+  title,
+  children,
+  height = 250,
+  isPro,
+  version = "V2",
+}: ChartCardProps & { version?: "V1" | "V2" | "V3" }) {
   return (
     <Card className="overflow-hidden relative">
+      <Ribbon version={version} />
       <CardHeader>
         <CardTitle>{title}</CardTitle>
       </CardHeader>
@@ -138,24 +147,175 @@ export function SessionMetricsCards({
 
   return (
     <>
-      <ChartCard title="Daily Sessions">
+      <ChartCard title="Monthly Active Users (MAU)" height={400} version="V2">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={filteredData}>
+          <LineChart data={analyticsData.sessionMetrics.activeUsers.monthly}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="date" />
             <YAxis />
             <Tooltip />
+            <Legend />
             <Line
               type="monotone"
-              dataKey="pro"
-              stroke="#2563eb"
+              dataKey="users"
+              stroke="hsl(var(--chart-3))"
+              name="Monthly Active Users"
               strokeWidth={2}
             />
           </LineChart>
         </ResponsiveContainer>
       </ChartCard>
 
-      <ChartCard title="Connection Channel Distribution">
+      <ChartCard title="Daily Sessions" height={400} version="V1">
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={filteredData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="date" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Line
+              type="monotone"
+              dataKey="total"
+              stroke="hsl(var(--chart-1))"
+              name="Total Sessions"
+              strokeWidth={2}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </ChartCard>
+
+      <ChartCard
+        title="Daily Active Users (DAU)"
+        isPro
+        height={400}
+        version="V2"
+      >
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={analyticsData.sessionMetrics.activeUsers.daily}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="date" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Line
+              type="monotone"
+              dataKey="users"
+              stroke="hsl(var(--chart-1))"
+              name="Daily Active Users"
+              strokeWidth={2}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+        {!isPro && <PaywallOverlay title="Daily Active Users" />}
+      </ChartCard>
+
+      <ChartCard
+        title="Weekly Active Users (WAU)"
+        isPro
+        height={400}
+        version="V2"
+      >
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={analyticsData.sessionMetrics.activeUsers.weekly}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="date" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Line
+              type="monotone"
+              dataKey="users"
+              stroke="hsl(var(--chart-2))"
+              name="Weekly Active Users"
+              strokeWidth={2}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+        {!isPro && <PaywallOverlay title="Weekly Active Users" />}
+      </ChartCard>
+
+      <ChartCard title="Country Distribution" height={400} version="V2">
+        <ChartContainer
+          config={{
+            distribution: {
+              label: "Distribution",
+            },
+          }}
+        >
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart margin={{ top: 10, right: 30, bottom: 10, left: 30 }}>
+              <Pie
+                data={analyticsData.sessionMetrics.countryDistribution}
+                cx="50%"
+                cy="50%"
+                labelLine={false}
+                outerRadius={60}
+                fill="hsl(var(--chart-1))"
+                dataKey="value"
+                nameKey="name"
+                label={({ name, percent }) =>
+                  `${name}: ${(percent * 100).toFixed(0)}%`
+                }
+              >
+                {analyticsData.sessionMetrics.countryDistribution.map(
+                  (entry, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={`hsl(var(--chart-${(index % 5) + 1}))`}
+                    />
+                  )
+                )}
+              </Pie>
+              <ChartTooltip content={<ChartTooltipContent />} />
+            </PieChart>
+          </ResponsiveContainer>
+        </ChartContainer>
+      </ChartCard>
+
+      <ChartCard title="Platform Distribution" height={400} version="V2">
+        <ChartContainer
+          config={{
+            distribution: {
+              label: "Distribution",
+            },
+          }}
+        >
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart margin={{ top: 10, right: 30, bottom: 10, left: 30 }}>
+              <Pie
+                data={analyticsData.sessionMetrics.platformDistribution}
+                cx="50%"
+                cy="50%"
+                labelLine={false}
+                outerRadius={60}
+                fill="hsl(var(--chart-1))"
+                dataKey="value"
+                nameKey="name"
+                label={({ name, percent }) =>
+                  `${name}: ${(percent * 100).toFixed(0)}%`
+                }
+              >
+                {analyticsData.sessionMetrics.platformDistribution.map(
+                  (entry, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={`hsl(var(--chart-${(index % 5) + 1}))`}
+                    />
+                  )
+                )}
+              </Pie>
+              <ChartTooltip content={<ChartTooltipContent />} />
+            </PieChart>
+          </ResponsiveContainer>
+        </ChartContainer>
+      </ChartCard>
+
+      <ChartCard
+        title="Connection Channel Distribution"
+        height={400}
+        version="V1"
+      >
         <ChartContainer
           config={{
             distribution: {
@@ -194,7 +354,7 @@ export function SessionMetricsCards({
         {!isPro && <PaywallOverlay title="Connection Channel Distribution" />}
       </ChartCard>
 
-      <ChartCard title="Social Connection Types">
+      <ChartCard title="Social Connection Types" height={400} version="V2">
         <ChartContainer
           config={{
             distribution: {
@@ -234,7 +394,11 @@ export function SessionMetricsCards({
         {!isPro && <PaywallOverlay title="Social Connection Types" />}
       </ChartCard>
 
-      <ChartCard title="Connection Success Rate by Channel">
+      <ChartCard
+        title="Connection Success Rate by Channel"
+        height={400}
+        version="V3"
+      >
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={analyticsData.sessionMetrics.channelSuccessRate}>
             <CartesianGrid strokeDasharray="3 3" />
@@ -242,7 +406,11 @@ export function SessionMetricsCards({
             <YAxis domain={[0, 100]} />
             <Tooltip />
             <Legend />
-            <Bar dataKey="pro" fill="hsl(var(--chart-2))" />
+            <Bar
+              dataKey="success"
+              fill="hsl(var(--chart-2))"
+              name="Success Rate"
+            />
           </BarChart>
         </ResponsiveContainer>
         {!isPro && (
@@ -250,7 +418,11 @@ export function SessionMetricsCards({
         )}
       </ChartCard>
 
-      <ChartCard title="Connection Method Distribution">
+      <ChartCard
+        title="Connection Method Distribution"
+        height={400}
+        version="V1"
+      >
         <ChartContainer
           config={{
             distribution: {
@@ -288,7 +460,7 @@ export function SessionMetricsCards({
         </ChartContainer>
       </ChartCard>
 
-      <ChartCard title="Connection Success Rate (%)">
+      <ChartCard title="Connection Success Rate (%)" height={400} version="V3">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={analyticsData.connectionMetrics.successRate}>
             <CartesianGrid strokeDasharray="3 3" />
@@ -296,12 +468,16 @@ export function SessionMetricsCards({
             <YAxis domain={[0, 100]} />
             <Tooltip />
             <Legend />
-            <Bar dataKey="pro" fill="hsl(var(--chart-2))" />
+            <Bar
+              dataKey="success"
+              fill="hsl(var(--chart-2))"
+              name="Success Rate"
+            />
           </BarChart>
         </ResponsiveContainer>
       </ChartCard>
 
-      <ChartCard title="Time to Connect (seconds)">
+      <ChartCard title="Time to Connect (seconds)" height={400} version="V3">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={analyticsData.connectionMetrics.timeToConnect}>
             <CartesianGrid strokeDasharray="3 3" />
@@ -309,12 +485,16 @@ export function SessionMetricsCards({
             <YAxis />
             <Tooltip />
             <Legend />
-            <Bar dataKey="pro" fill="hsl(var(--chart-1))" />
+            <Bar
+              dataKey="time"
+              fill="hsl(var(--chart-1))"
+              name="Time (seconds)"
+            />
           </BarChart>
         </ResponsiveContainer>
       </ChartCard>
 
-      <ChartCard title="Connection Drop-off Points">
+      <ChartCard title="Connection Drop-off Points" height={400} version="V3">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={analyticsData.connectionMetrics.dropOffPoints}
@@ -338,9 +518,57 @@ export function UserBehaviorCards({ isPro }: MetricsCardsProps) {
   const [selectedSegment, setSelectedSegment] =
     useState<UserSegmentType | null>(null);
 
+  const userSegmentData = Object.entries(
+    analyticsData.userBehavior.userSegments.details
+  ).map(([segment, data]) => ({
+    name: segment,
+    retention: data.retentionRate,
+    actions: data.avgActionsPerSession,
+  }));
+
   return (
     <>
-      <ChartCard title="Feature Usage">
+      <ChartCard title="Growth Accounting" version="V2">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart
+            data={analyticsData.userBehavior.growthAccounting}
+            margin={{ top: 10, right: 10, left: 10, bottom: 20 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="week" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Bar
+              dataKey="new"
+              stackId="a"
+              fill="hsl(var(--chart-1))"
+              name="New Users"
+            />
+            <Bar
+              dataKey="returning"
+              stackId="a"
+              fill="hsl(var(--chart-2))"
+              name="Returning Users"
+            />
+            <Bar
+              dataKey="resurrecting"
+              stackId="a"
+              fill="hsl(var(--chart-3))"
+              name="Resurrecting Users"
+            />
+            <Bar
+              dataKey="dormant"
+              stackId="a"
+              fill="hsl(var(--chart-4))"
+              name="Dormant Users"
+            />
+          </BarChart>
+        </ResponsiveContainer>
+        {!isPro && <PaywallOverlay title="Growth Accounting" />}
+      </ChartCard>
+
+      <ChartCard title="Feature Usage" version="V2">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={analyticsData.userBehavior.featureUsage}
@@ -357,7 +585,7 @@ export function UserBehaviorCards({ isPro }: MetricsCardsProps) {
         {!isPro && <PaywallOverlay title="Feature Usage Analysis" />}
       </ChartCard>
 
-      <ChartCard title="Average Time Spent (minutes)">
+      <ChartCard title="Average Time Spent (minutes)" version="V2">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={analyticsData.userBehavior.timeSpent}>
             <CartesianGrid strokeDasharray="3 3" />
@@ -376,7 +604,7 @@ export function UserBehaviorCards({ isPro }: MetricsCardsProps) {
         {!isPro && <PaywallOverlay title="Session Duration Analysis" />}
       </ChartCard>
 
-      <ChartCard title="Return Rate Analysis">
+      <ChartCard title="Return Rate Analysis" version="V2">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={analyticsData.userBehavior.returnRate}>
             <CartesianGrid strokeDasharray="3 3" />
@@ -390,7 +618,7 @@ export function UserBehaviorCards({ isPro }: MetricsCardsProps) {
         {!isPro && <PaywallOverlay title="User Retention Metrics" />}
       </ChartCard>
 
-      <ChartCard title="Dwell Time Between Actions">
+      <ChartCard title="Dwell Time Between Actions" version="V2">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={analyticsData.userBehavior.dwellTime}>
             <CartesianGrid strokeDasharray="3 3" />
@@ -404,7 +632,7 @@ export function UserBehaviorCards({ isPro }: MetricsCardsProps) {
         {!isPro && <PaywallOverlay title="User Interaction Analysis" />}
       </ChartCard>
 
-      <ChartCard title="User Segments">
+      <ChartCard title="User Segments" version="V2">
         {selectedSegment ? (
           <div className="h-full">
             <button
@@ -452,16 +680,6 @@ export function UserBehaviorCards({ isPro }: MetricsCardsProps) {
                         selectedSegment as UserSegmentType
                       ].avgActionsPerSession
                     }
-                  </div>
-                </div>
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <div className="text-sm text-gray-600">Multi-Chain</div>
-                  <div className="text-2xl font-semibold">
-                    {analyticsData.userBehavior.userSegments.details[
-                      selectedSegment as UserSegmentType
-                    ].multiChain
-                      ? "Yes"
-                      : "No"}
                   </div>
                 </div>
                 <div className="bg-gray-50 p-4 rounded-lg">
@@ -535,7 +753,7 @@ export function UserBehaviorCards({ isPro }: MetricsCardsProps) {
 export function ChainMetricsCards({ isPro }: MetricsCardsProps) {
   return (
     <>
-      <ChartCard title="Chain Usage Distribution">
+      <ChartCard title="Chain Usage Distribution" height={400} version="V1">
         <ChartContainer
           config={{
             usage: {
@@ -571,40 +789,22 @@ export function ChainMetricsCards({ isPro }: MetricsCardsProps) {
       </ChartCard>
 
       {isPro && (
-        <>
-          <ChartCard title="RPC Request Success Rate (%)">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={analyticsData.chainMetrics.rpcSuccess}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="chain" />
-                <YAxis domain={[95, 100]} />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="success" fill="hsl(var(--chart-4))" />
-              </BarChart>
-            </ResponsiveContainer>
-          </ChartCard>
-
-          <ChartCard title="Multi-Chain User Patterns" height={300}>
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={analyticsData.chainMetrics.switchSuccess}
-                margin={{ top: 10, right: 10, left: 10, bottom: 20 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="chain" />
-                <YAxis domain={[0, 100]} />
-                <Tooltip />
-                <Legend />
-                <Bar
-                  dataKey="pro"
-                  fill="hsl(var(--chart-2))"
-                  name="Success Rate"
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          </ChartCard>
-        </>
+        <ChartCard
+          title="RPC Request Success Rate (%)"
+          height={400}
+          version="V2"
+        >
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={analyticsData.chainMetrics.rpcSuccess}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="chain" />
+              <YAxis domain={[95, 100]} />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="success" fill="hsl(var(--chart-4))" />
+            </BarChart>
+          </ResponsiveContainer>
+        </ChartCard>
       )}
     </>
   );
@@ -613,7 +813,7 @@ export function ChainMetricsCards({ isPro }: MetricsCardsProps) {
 export function TechnicalPerformanceCards({ isPro }: MetricsCardsProps) {
   return (
     <>
-      <ChartCard title="Error Distribution Analysis">
+      <ChartCard title="Error Distribution Analysis" version="V2">
         <ResponsiveContainer width="100%" height="100%">
           <Treemap
             data={analyticsData.technicalPerformance.errors}
@@ -626,14 +826,54 @@ export function TechnicalPerformanceCards({ isPro }: MetricsCardsProps) {
               <Cell
                 key={`cell-${index}`}
                 fill={`hsl(var(--chart-${(index % 5) + 1}))`}
-              />
+              >
+                <text
+                  x="50%"
+                  y="45%"
+                  textAnchor="middle"
+                  dominantBaseline="middle"
+                  fill="#fff"
+                  fontSize={12}
+                  style={{ pointerEvents: "none" }}
+                >
+                  {entry.type}
+                </text>
+                <text
+                  x="50%"
+                  y="60%"
+                  textAnchor="middle"
+                  dominantBaseline="middle"
+                  fill="#fff"
+                  fontSize={11}
+                  style={{ pointerEvents: "none" }}
+                >
+                  {entry.count}
+                </text>
+              </Cell>
             ))}
           </Treemap>
         </ResponsiveContainer>
+        <ChartTooltip
+          content={({ active, payload }) => {
+            if (active && payload && payload.length > 0) {
+              const data = payload[0].payload;
+              return (
+                <div className="bg-white p-2 shadow rounded border">
+                  <div className="font-medium">{data.type}</div>
+                  <div className="text-sm text-gray-600">
+                    {data.description}
+                  </div>
+                  <div className="text-sm mt-1">Count: {data.count}</div>
+                </div>
+              );
+            }
+            return null;
+          }}
+        />
         {!isPro && <PaywallOverlay title="Error Distribution Analysis" />}
       </ChartCard>
 
-      <ChartCard title="Method Popularity">
+      <ChartCard title="Method Popularity" version="V1">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={analyticsData.technicalPerformance.methodPopularity}
@@ -650,7 +890,7 @@ export function TechnicalPerformanceCards({ isPro }: MetricsCardsProps) {
         {!isPro && <PaywallOverlay title="Contract Method Analysis" />}
       </ChartCard>
 
-      <ChartCard title="Wallet Compatibility Matrix">
+      <ChartCard title="Wallet Compatibility Matrix" height={400} version="V2">
         <div className="h-full w-full overflow-x-auto">
           <table className="min-w-full border-collapse">
             <thead>
@@ -712,7 +952,7 @@ export function TechnicalPerformanceCards({ isPro }: MetricsCardsProps) {
 export function AdvancedAnalyticsCards({ isPro }: MetricsCardsProps) {
   return (
     <>
-      <ChartCard title="Transaction Value Distribution">
+      <ChartCard title="Transaction Value Distribution" version="V2">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={analyticsData.advancedAnalytics.transactionValues}
@@ -729,7 +969,7 @@ export function AdvancedAnalyticsCards({ isPro }: MetricsCardsProps) {
         {!isPro && <PaywallOverlay title="Transaction Value Analysis" />}
       </ChartCard>
 
-      <ChartCard title="Gas Cost Impact Analysis">
+      <ChartCard title="Gas Cost Impact Analysis" version="V2">
         <ResponsiveContainer width="100%" height="100%">
           <ScatterChart margin={{ top: 10, right: 10, left: 10, bottom: 20 }}>
             <CartesianGrid strokeDasharray="3 3" />
@@ -750,7 +990,7 @@ export function AdvancedAnalyticsCards({ isPro }: MetricsCardsProps) {
         {!isPro && <PaywallOverlay title="Gas Price Impact Analysis" />}
       </ChartCard>
 
-      <ChartCard title="Cohort Retention Analysis" height={300}>
+      <ChartCard title="Cohort Retention Analysis" height={300} version="V2">
         <div className="h-full w-full overflow-x-auto">
           <table className="min-w-full border-collapse">
             <thead>
@@ -804,7 +1044,7 @@ export function AdvancedAnalyticsCards({ isPro }: MetricsCardsProps) {
         {!isPro && <PaywallOverlay title="Cohort Retention Analysis" />}
       </ChartCard>
 
-      <ChartCard title="Predictive Usage Forecasting" height={280}>
+      <ChartCard title="Predictive Usage Forecasting" height={280} version="V2">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={analyticsData.advancedAnalytics.usageForecasting}
@@ -888,7 +1128,7 @@ export function SwapMetricsCards({
 
   return (
     <>
-      <ChartCard title="Total Swaps">
+      <ChartCard title="Total Swaps" version="V3">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={filteredData}>
             <CartesianGrid strokeDasharray="3 3" />
@@ -898,23 +1138,16 @@ export function SwapMetricsCards({
             <Legend />
             <Line
               type="monotone"
-              dataKey="free"
+              dataKey="total"
               stroke="hsl(var(--chart-1))"
-              name="Free"
-              strokeWidth={2}
-            />
-            <Line
-              type="monotone"
-              dataKey="pro"
-              stroke="hsl(var(--chart-2))"
-              name="Pro"
+              name="Total Swaps"
               strokeWidth={2}
             />
           </LineChart>
         </ResponsiveContainer>
       </ChartCard>
 
-      <ChartCard title="Total Swaps Volume (USD)">
+      <ChartCard title="Total Swaps Volume (USD)" version="V3">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={filteredData}>
             <CartesianGrid strokeDasharray="3 3" />
@@ -933,7 +1166,7 @@ export function SwapMetricsCards({
         </ResponsiveContainer>
       </ChartCard>
 
-      <ChartCard title="Trading Pairs">
+      <ChartCard title="Trading Pairs" version="V3">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={analyticsData.swapMetrics.tradingPairs}
@@ -950,7 +1183,7 @@ export function SwapMetricsCards({
         {!isPro && <PaywallOverlay title="Trading Pairs Analysis" />}
       </ChartCard>
 
-      <ChartCard title="Swaps by Geography">
+      <ChartCard title="Swaps by Geography" version="V3">
         <ChartContainer
           config={{
             distribution: {
@@ -987,7 +1220,7 @@ export function SwapMetricsCards({
         {!isPro && <PaywallOverlay title="Geographic Distribution Analysis" />}
       </ChartCard>
 
-      <ChartCard title="Session to Swaps Ratio">
+      <ChartCard title="Session to Swaps Ratio" version="V3">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={analyticsData.swapMetrics.sessionsToSwaps}>
             <CartesianGrid strokeDasharray="3 3" />

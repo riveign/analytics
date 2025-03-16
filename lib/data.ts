@@ -1,13 +1,49 @@
 export let analyticsData = {
   sessionMetrics: {
     daily: [
-      { date: "01/03", free: 1240, pro: 2400 },
-      { date: "02/03", free: 1380, pro: 2210 },
-      { date: "03/03", free: 1520, pro: 2290 },
-      { date: "04/03", free: 1200, pro: 2180 },
-      { date: "05/03", free: 1700, pro: 2590 },
-      { date: "06/03", free: 1820, pro: 2390 },
-      { date: "07/03", free: 1900, pro: 2490 },
+      { date: "01/03", total: 3640 },
+      { date: "02/03", total: 3590 },
+      { date: "03/03", total: 3810 },
+      { date: "04/03", total: 3380 },
+      { date: "05/03", total: 4290 },
+      { date: "06/03", total: 4210 },
+      { date: "07/03", total: 4390 },
+    ],
+    activeUsers: {
+      daily: [
+        { date: "01/03", users: 2840 },
+        { date: "02/03", users: 2790 },
+        { date: "03/03", users: 3010 },
+        { date: "04/03", users: 2580 },
+        { date: "05/03", users: 3490 },
+        { date: "06/03", users: 3410 },
+        { date: "07/03", users: 3590 },
+      ],
+      weekly: [
+        { date: "01/03", users: 12840 },
+        { date: "02/03", users: 13790 },
+        { date: "03/03", users: 14010 },
+        { date: "04/03", users: 13580 },
+        { date: "05/03", users: 14490 },
+        { date: "06/03", users: 15410 },
+        { date: "07/03", users: 15990 },
+      ],
+      monthly: [
+        { date: "01/03", users: 45840 },
+        { date: "02/03", users: 46790 },
+        { date: "03/03", users: 48010 },
+        { date: "04/03", users: 47580 },
+        { date: "05/03", users: 49490 },
+        { date: "06/03", users: 50410 },
+        { date: "07/03", users: 51990 },
+      ],
+    },
+    platformDistribution: [
+      { name: "Windows", value: 35 },
+      { name: "macOS", value: 30 },
+      { name: "iOS", value: 15 },
+      { name: "Android", value: 12 },
+      { name: "Linux", value: 8 },
     ],
     channelDistribution: [
       { name: "Wallet", value: 45 },
@@ -20,9 +56,9 @@ export let analyticsData = {
       { name: "X", value: 20 },
     ],
     channelSuccessRate: [
-      { channel: "Wallet", free: 92, pro: 98 },
-      { channel: "Social", free: 88, pro: 95 },
-      { channel: "Email", free: 85, pro: 94 },
+      { channel: "Wallet", success: 95 },
+      { channel: "Social", success: 92 },
+      { channel: "Email", success: 90 },
     ],
     distribution: [
       { name: "Browser Extension", value: 45 },
@@ -38,17 +74,27 @@ export let analyticsData = {
       { date: "06/03", ratio: 0.52 },
       { date: "07/03", ratio: 0.55 },
     ],
+    countryDistribution: [
+      { name: "United States", value: 35 },
+      { name: "United Kingdom", value: 15 },
+      { name: "Germany", value: 12 },
+      { name: "Japan", value: 10 },
+      { name: "South Korea", value: 8 },
+      { name: "Canada", value: 7 },
+      { name: "France", value: 7 },
+      { name: "Others", value: 6 },
+    ],
   },
   connectionMetrics: {
     successRate: [
-      { method: "QR Code", free: 82, pro: 94 },
-      { method: "Mobile Linking", free: 75, pro: 92 },
-      { method: "Browser Extension", free: 90, pro: 97 },
+      { method: "QR Code", success: 88 },
+      { method: "Mobile Linking", success: 84 },
+      { method: "Browser Extension", success: 94 },
     ],
     timeToConnect: [
-      { method: "QR Code", free: 8.2, pro: 4.5 },
-      { method: "Mobile Linking", free: 5.1, pro: 2.8 },
-      { method: "Browser Extension", free: 2.3, pro: 1.1 },
+      { method: "QR Code", time: 6.4 },
+      { method: "Mobile Linking", time: 4.0 },
+      { method: "Browser Extension", time: 1.7 },
     ],
     dropOffPoints: [
       { point: "Initial Click", percentage: 10 },
@@ -98,28 +144,24 @@ export let analyticsData = {
         "Power Users": {
           avgSessionLength: 25,
           avgActionsPerSession: 12,
-          multiChain: true,
           commonActions: ["Swap", "Sign", "Transaction"],
           retentionRate: 85,
         },
         "Regular Users": {
           avgSessionLength: 15,
           avgActionsPerSession: 7,
-          multiChain: true,
           commonActions: ["Sign", "Transaction"],
           retentionRate: 65,
         },
         "Casual Users": {
           avgSessionLength: 8,
           avgActionsPerSession: 3,
-          multiChain: false,
           commonActions: ["Sign"],
           retentionRate: 40,
         },
         "New Users": {
           avgSessionLength: 5,
           avgActionsPerSession: 2,
-          multiChain: false,
           commonActions: ["Connect"],
           retentionRate: 25,
         },
@@ -194,12 +236,46 @@ export let analyticsData = {
   },
   technicalPerformance: {
     errors: [
-      { type: "Connection Timeout", count: 320 },
-      { type: "Wallet Rejected", count: 280 },
-      { type: "Network Error", count: 210 },
-      { type: "Signature Failed", count: 150 },
-      { type: "Chain Not Supported", count: 120 },
-      { type: "Other", count: 90 },
+      {
+        type: "Insufficient Balance",
+        count: 245,
+        description: "User has insufficient funds for transaction",
+      },
+      {
+        type: "Network Congestion",
+        count: 189,
+        description: "High network traffic causing transaction delays",
+      },
+      {
+        type: "RPC Connection Failed",
+        count: 156,
+        description: "Failed to connect to blockchain node",
+      },
+      {
+        type: "Signature Rejected",
+        count: 134,
+        description: "User rejected transaction signature",
+      },
+      {
+        type: "Gas Estimation Failed",
+        count: 98,
+        description: "Unable to estimate transaction gas cost",
+      },
+      {
+        type: "Chain ID Mismatch",
+        count: 87,
+        description: "Wrong network selected in wallet",
+      },
+      {
+        type: "Invalid Contract Address",
+        count: 76,
+        description: "Contract address format or checksum invalid",
+      },
+      {
+        type: "Method Not Found",
+        count: 65,
+        description: "Smart contract method does not exist",
+      },
     ],
     methodPopularity: [
       { method: "eth_sendTransaction", count: 3200 },
@@ -309,13 +385,13 @@ export let analyticsData = {
   swapMetrics: {
     isEnabled: false,
     daily: [
-      { date: "01/03", free: 450, pro: 850, volume: 1250000 },
-      { date: "02/03", free: 520, pro: 920, volume: 1420000 },
-      { date: "03/03", free: 480, pro: 880, volume: 1380000 },
-      { date: "04/03", free: 510, pro: 950, volume: 1520000 },
-      { date: "05/03", free: 580, pro: 1020, volume: 1680000 },
-      { date: "06/03", free: 620, pro: 1150, volume: 1820000 },
-      { date: "07/03", free: 590, pro: 1080, volume: 1750000 },
+      { date: "01/03", total: 1300, volume: 1250000 },
+      { date: "02/03", total: 1440, volume: 1420000 },
+      { date: "03/03", total: 1360, volume: 1380000 },
+      { date: "04/03", total: 1460, volume: 1520000 },
+      { date: "05/03", total: 1600, volume: 1680000 },
+      { date: "06/03", total: 1770, volume: 1820000 },
+      { date: "07/03", total: 1670, volume: 1750000 },
     ],
     tradingPairs: [
       { pair: "ETH/USDT", count: 2450, volume: 850000 },
@@ -339,5 +415,373 @@ export let analyticsData = {
       { date: "06/03", ratio: 0.22 },
       { date: "07/03", ratio: 0.2 },
     ],
+  },
+  competitiveMetrics: {
+    topApps: [
+      {
+        category: "DeFi",
+        apps: [
+          { name: "Uniswap", userShare: 45, monthlyGrowth: 2.5 },
+          { name: "PancakeSwap", userShare: 35, monthlyGrowth: 1.8 },
+          { name: "Curve", userShare: 28, monthlyGrowth: 1.2 },
+          { name: "Aave", userShare: 25, monthlyGrowth: 2.1 },
+          { name: "1inch", userShare: 20, monthlyGrowth: 1.5 },
+        ],
+      },
+      {
+        category: "NFT",
+        apps: [
+          { name: "OpenSea", userShare: 42, monthlyGrowth: 1.9 },
+          { name: "Blur", userShare: 32, monthlyGrowth: 3.2 },
+          { name: "Rarible", userShare: 18, monthlyGrowth: 0.8 },
+          { name: "Foundation", userShare: 15, monthlyGrowth: 1.1 },
+          { name: "SuperRare", userShare: 12, monthlyGrowth: 0.9 },
+        ],
+      },
+      {
+        category: "Gaming",
+        apps: [
+          { name: "Axie Infinity", userShare: 38, monthlyGrowth: -0.5 },
+          { name: "Decentraland", userShare: 28, monthlyGrowth: 1.2 },
+          { name: "The Sandbox", userShare: 25, monthlyGrowth: 1.5 },
+          { name: "Gods Unchained", userShare: 20, monthlyGrowth: 2.8 },
+          { name: "Illuvium", userShare: 15, monthlyGrowth: 3.5 },
+        ],
+      },
+      {
+        category: "Social",
+        apps: [
+          { name: "Lens Protocol", userShare: 35, monthlyGrowth: 4.2 },
+          { name: "Farcaster", userShare: 28, monthlyGrowth: 5.5 },
+          { name: "CyberConnect", userShare: 22, monthlyGrowth: 3.8 },
+          { name: "Friend.tech", userShare: 18, monthlyGrowth: -1.2 },
+          { name: "DeSo", userShare: 15, monthlyGrowth: 1.1 },
+        ],
+      },
+    ],
+    userOverlap: {
+      DeFi: {
+        Uniswap: 100,
+        PancakeSwap: 45,
+        Curve: 38,
+        Aave: 42,
+        "1inch": 35,
+      },
+      NFT: {
+        OpenSea: 100,
+        Blur: 55,
+        Rarible: 28,
+        Foundation: 22,
+        SuperRare: 18,
+      },
+    },
+    monthlyActiveUsers: {
+      DeFi: [
+        { month: "Jan", users: 2500000 },
+        { month: "Feb", users: 2650000 },
+        { month: "Mar", users: 2800000 },
+        { month: "Apr", users: 3100000 },
+        { month: "May", users: 3400000 },
+        { month: "Jun", users: 3800000 },
+      ],
+    },
+    userTimeSpent: [
+      {
+        category: "DeFi",
+        totalShare: 35,
+        trend: "+2.5",
+        apps: [
+          {
+            name: "Uniswap",
+            timeShare: 42,
+            avgDuration: 8.5,
+            sessionsPerWeek: 3.2,
+          },
+          {
+            name: "PancakeSwap",
+            timeShare: 28,
+            avgDuration: 7.2,
+            sessionsPerWeek: 2.8,
+          },
+          {
+            name: "Curve",
+            timeShare: 15,
+            avgDuration: 12.5,
+            sessionsPerWeek: 1.5,
+          },
+          {
+            name: "Aave",
+            timeShare: 10,
+            avgDuration: 15.3,
+            sessionsPerWeek: 1.2,
+          },
+          {
+            name: "1inch",
+            timeShare: 5,
+            avgDuration: 5.8,
+            sessionsPerWeek: 1.8,
+          },
+        ],
+      },
+      {
+        category: "NFT Marketplaces",
+        totalShare: 25,
+        trend: "+1.8",
+        apps: [
+          {
+            name: "OpenSea",
+            timeShare: 45,
+            avgDuration: 12.3,
+            sessionsPerWeek: 2.5,
+          },
+          {
+            name: "Blur",
+            timeShare: 30,
+            avgDuration: 9.5,
+            sessionsPerWeek: 3.1,
+          },
+          {
+            name: "Rarible",
+            timeShare: 15,
+            avgDuration: 7.8,
+            sessionsPerWeek: 1.9,
+          },
+          {
+            name: "Foundation",
+            timeShare: 7,
+            avgDuration: 5.5,
+            sessionsPerWeek: 1.4,
+          },
+          {
+            name: "SuperRare",
+            timeShare: 3,
+            avgDuration: 4.2,
+            sessionsPerWeek: 1.1,
+          },
+        ],
+      },
+      {
+        category: "GameFi",
+        totalShare: 22,
+        trend: "+4.2",
+        apps: [
+          {
+            name: "Axie Infinity",
+            timeShare: 35,
+            avgDuration: 45.5,
+            sessionsPerWeek: 5.5,
+          },
+          {
+            name: "Decentraland",
+            timeShare: 25,
+            avgDuration: 35.2,
+            sessionsPerWeek: 3.8,
+          },
+          {
+            name: "The Sandbox",
+            timeShare: 20,
+            avgDuration: 28.5,
+            sessionsPerWeek: 3.2,
+          },
+          {
+            name: "Gods Unchained",
+            timeShare: 12,
+            avgDuration: 22.3,
+            sessionsPerWeek: 4.1,
+          },
+          {
+            name: "Illuvium",
+            timeShare: 8,
+            avgDuration: 18.7,
+            sessionsPerWeek: 2.9,
+          },
+        ],
+      },
+      {
+        category: "Social/Content",
+        totalShare: 18,
+        trend: "+5.5",
+        apps: [
+          {
+            name: "Lens Protocol",
+            timeShare: 40,
+            avgDuration: 15.5,
+            sessionsPerWeek: 6.2,
+          },
+          {
+            name: "Farcaster",
+            timeShare: 25,
+            avgDuration: 12.8,
+            sessionsPerWeek: 5.5,
+          },
+          {
+            name: "CyberConnect",
+            timeShare: 20,
+            avgDuration: 10.5,
+            sessionsPerWeek: 4.8,
+          },
+          {
+            name: "Friend.tech",
+            timeShare: 10,
+            avgDuration: 8.2,
+            sessionsPerWeek: 3.5,
+          },
+          {
+            name: "DeSo",
+            timeShare: 5,
+            avgDuration: 6.5,
+            sessionsPerWeek: 2.8,
+          },
+        ],
+      },
+    ],
+    timeSpentTrends: {
+      weekly: [
+        { week: "Week 1", DeFi: 32, NFT: 23, GameFi: 20, Social: 15 },
+        { week: "Week 2", DeFi: 33, NFT: 24, GameFi: 21, Social: 16 },
+        { week: "Week 3", DeFi: 34, NFT: 24, GameFi: 21, Social: 17 },
+        { week: "Week 4", DeFi: 35, NFT: 25, GameFi: 22, Social: 18 },
+      ],
+      peakHours: {
+        DeFi: ["10:00", "14:00", "20:00"],
+        "NFT Marketplaces": ["13:00", "16:00", "22:00"],
+        GameFi: ["16:00", "19:00", "22:00"],
+        Social: ["11:00", "17:00", "23:00"],
+      },
+    },
+    regionalUserOverlap: {
+      "North America": {
+        Uniswap: [
+          { app: "OpenSea", overlap: 45 },
+          { app: "Lens Protocol", overlap: 35 },
+          { app: "Axie Infinity", overlap: 28 },
+        ],
+        OpenSea: [
+          { app: "Uniswap", overlap: 42 },
+          { app: "Blur", overlap: 38 },
+          { app: "Lens Protocol", overlap: 25 },
+        ],
+        "Axie Infinity": [
+          { app: "The Sandbox", overlap: 52 },
+          { app: "Uniswap", overlap: 35 },
+          { app: "OpenSea", overlap: 30 },
+        ],
+        "Lens Protocol": [
+          { app: "Farcaster", overlap: 48 },
+          { app: "Uniswap", overlap: 32 },
+          { app: "OpenSea", overlap: 28 },
+        ],
+      },
+      Europe: {
+        Uniswap: [
+          { app: "PancakeSwap", overlap: 42 },
+          { app: "OpenSea", overlap: 38 },
+          { app: "CyberConnect", overlap: 25 },
+        ],
+        OpenSea: [
+          { app: "Uniswap", overlap: 40 },
+          { app: "Rarible", overlap: 35 },
+          { app: "Gods Unchained", overlap: 28 },
+        ],
+        "Axie Infinity": [
+          { app: "Gods Unchained", overlap: 45 },
+          { app: "PancakeSwap", overlap: 32 },
+          { app: "Lens Protocol", overlap: 25 },
+        ],
+        "Lens Protocol": [
+          { app: "CyberConnect", overlap: 45 },
+          { app: "Uniswap", overlap: 35 },
+          { app: "OpenSea", overlap: 30 },
+        ],
+      },
+      Asia: {
+        Uniswap: [
+          { app: "PancakeSwap", overlap: 55 },
+          { app: "Axie Infinity", overlap: 42 },
+          { app: "OpenSea", overlap: 32 },
+        ],
+        OpenSea: [
+          { app: "Axie Infinity", overlap: 48 },
+          { app: "PancakeSwap", overlap: 40 },
+          { app: "The Sandbox", overlap: 35 },
+        ],
+        "Axie Infinity": [
+          { app: "PancakeSwap", overlap: 58 },
+          { app: "The Sandbox", overlap: 45 },
+          { app: "OpenSea", overlap: 38 },
+        ],
+        "Lens Protocol": [
+          { app: "CyberConnect", overlap: 52 },
+          { app: "PancakeSwap", overlap: 38 },
+          { app: "Axie Infinity", overlap: 32 },
+        ],
+      },
+      "Latin America": {
+        Uniswap: [
+          { app: "PancakeSwap", overlap: 48 },
+          { app: "Axie Infinity", overlap: 40 },
+          { app: "Decentraland", overlap: 35 },
+        ],
+        OpenSea: [
+          { app: "PancakeSwap", overlap: 42 },
+          { app: "Axie Infinity", overlap: 38 },
+          { app: "Uniswap", overlap: 32 },
+        ],
+        "Axie Infinity": [
+          { app: "PancakeSwap", overlap: 52 },
+          { app: "The Sandbox", overlap: 42 },
+          { app: "Decentraland", overlap: 38 },
+        ],
+        "Lens Protocol": [
+          { app: "CyberConnect", overlap: 45 },
+          { app: "Farcaster", overlap: 35 },
+          { app: "PancakeSwap", overlap: 30 },
+        ],
+      },
+      Oceania: {
+        Uniswap: [
+          { app: "OpenSea", overlap: 42 },
+          { app: "PancakeSwap", overlap: 35 },
+          { app: "Lens Protocol", overlap: 28 },
+        ],
+        OpenSea: [
+          { app: "Uniswap", overlap: 40 },
+          { app: "Blur", overlap: 35 },
+          { app: "The Sandbox", overlap: 30 },
+        ],
+        "Axie Infinity": [
+          { app: "The Sandbox", overlap: 48 },
+          { app: "Gods Unchained", overlap: 42 },
+          { app: "PancakeSwap", overlap: 35 },
+        ],
+        "Lens Protocol": [
+          { app: "Farcaster", overlap: 42 },
+          { app: "CyberConnect", overlap: 38 },
+          { app: "OpenSea", overlap: 32 },
+        ],
+      },
+      "Middle East & Africa": {
+        Uniswap: [
+          { app: "PancakeSwap", overlap: 45 },
+          { app: "OpenSea", overlap: 38 },
+          { app: "Axie Infinity", overlap: 32 },
+        ],
+        OpenSea: [
+          { app: "PancakeSwap", overlap: 42 },
+          { app: "Uniswap", overlap: 38 },
+          { app: "The Sandbox", overlap: 32 },
+        ],
+        "Axie Infinity": [
+          { app: "PancakeSwap", overlap: 50 },
+          { app: "The Sandbox", overlap: 42 },
+          { app: "Gods Unchained", overlap: 35 },
+        ],
+        "Lens Protocol": [
+          { app: "CyberConnect", overlap: 48 },
+          { app: "PancakeSwap", overlap: 40 },
+          { app: "OpenSea", overlap: 35 },
+        ],
+      },
+    },
   },
 };
