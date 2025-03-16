@@ -1,4 +1,4 @@
-export let analyticsData = {
+export const analyticsData = {
   sessionMetrics: {
     daily: [
       { date: "01/03", total: 3640 },

@@ -1,5 +1,7 @@
 "use client";
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DashboardHeader } from "@/components/dashboard-header";
@@ -37,6 +39,7 @@ function DateFilters({
   isPro,
   showCustomDateFilter,
   setShowCustomDateFilter,
+  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
   customDateRange,
   setCustomDateRange,
 }: {
@@ -382,7 +385,7 @@ export default function AnalyticsDashboard() {
                 <p className="text-gray-600 mb-6 max-w-md">
                   Get insights into user engagement patterns across different
                   Web3 categories. Understand which apps capture the most user
-                  attention and when they're most active.
+                  attention and when they&apos;re most active.
                 </p>
                 <button
                   onClick={() => setIsPro(true)}

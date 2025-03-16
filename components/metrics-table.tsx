@@ -30,22 +30,17 @@ export function MetricsTable() {
   ];
 
   // Get all categories
-  const categories = Object.keys(metricsDefinitions).map((key) => {
-    return key
-      .replace(/([A-Z])/g, " $1")
-      .replace(/^./, (str) => str.toUpperCase());
-  });
 
   // Function to get category for a metric
   const getCategoryForMetric = (metricName: string) => {
     for (const [category, metrics] of Object.entries(metricsDefinitions)) {
-      if (metrics.some((m: any) => m.name === metricName)) {
+      if (metrics.some((m: { name: string }) => m.name === metricName)) {
         return category
           .replace(/([A-Z])/g, " $1")
           .replace(/^./, (str) => str.toUpperCase());
       }
     }
-    return "";
+    return "Unknown";
   };
 
   // Function to get badge variant and class based on version

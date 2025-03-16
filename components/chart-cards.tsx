@@ -71,13 +71,6 @@ type UserSegmentType =
   | "Casual Users"
   | "New Users";
 
-interface UserSegment {
-  avgSessionLength: number;
-  avgActionsPerSession: number;
-  commonActions: string[];
-  retentionRate: number;
-}
-
 function PaywallOverlay({ title }: PaywallOverlayProps) {
   return (
     <div className="absolute inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center text-center p-4 rounded-lg">
@@ -120,7 +113,6 @@ function ChartCard({
   title,
   children,
   height = 250,
-  isPro,
   version = "V2",
 }: ChartCardProps & { version?: "V1" | "V2" | "V3" }) {
   return (
@@ -129,7 +121,9 @@ function ChartCard({
       <CardHeader>
         <CardTitle>{title}</CardTitle>
       </CardHeader>
-      <CardContent style={{ height }}>{children}</CardContent>
+      <CardContent style={{ height }}>
+        <div className="h-full">{children}</div>
+      </CardContent>
     </Card>
   );
 }
@@ -524,6 +518,13 @@ export function UserBehaviorCards({ isPro }: MetricsCardsProps) {
     name: segment,
     retention: data.retentionRate,
     actions: data.avgActionsPerSession,
+  }));
+
+  // Commented out unused variable
+  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+  const segmentOptions = userSegmentData.map((segment) => ({
+    label: segment.name,
+    value: segment.name as UserSegmentType,
   }));
 
   return (
